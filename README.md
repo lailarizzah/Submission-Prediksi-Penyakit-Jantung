@@ -6,8 +6,6 @@ Penyakit jantung dan pembuluh darah atau yang dikenal sebagai penyakit kardiovas
 
 Laporan Global Status Report on Noncommunicable Diseases (NCD) 2019 yang dirilis oleh IHME menunjukkan bahwa penyakit jantung menyumbang 1 dari 3 kematian di dunia. Banyaknya kasus kematian tersebut membuat penyakit jantung menjadi salah satu perhatian Pemerintah Republik Indonesia untuk melakukan penanganan dan pencegahan terhadap penyakit tidak menular tersebut. Berdasarkan penelitian yang dilakukan oleh Hidayat et al. (2024), banyak faktor yang dapat memprediksi seseorang memiliki penyakit jantung, salah satu faktor utamanya adalah hipertensi. Selain itu, beberapa faktor seperti pola makan tinggi karbohidrat dan lemak, aktivitas fisik rendah, dan merokok juga dapat menjadi faktor tambahan untuk mengetahui seberapa besar risiko terhadap penyakit jantung.
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
-
 Diagnosis penyakit jantung sendiri umumnya dilakukan melalui serangkaian tes klinis yang memerlukan waktu, biaya, dan tenaga medis yang terbatas. Dengan perkembangan teknologi, machine learning (ML) menjadi pendekatan potensial untuk membantu proses diagnosis dini berbasis data medis pasien. Model klasifikasi berbasis ML dapat dilatih untuk mengenali pola dari data seperti tekanan darah, kolesterol, usia, dan riwayat medis lainnya, guna memprediksi apakah seseorang berisiko terkena penyakit jantung.
 
 Penerapan model prediktif ini penting karena:
@@ -41,12 +39,9 @@ Redwankarimsony. (2023). Heart Disease Data [Data set]. Kaggle. https://www.kagg
 - Menyediakan sistem prediksi yang cepat, murah, dan akurat untuk mendukung diagnosis awal penyakit jantung.
 - Mengevaluasi dan membandingkan beberapa algoritma machine learning untuk mendapatkan model terbaik dengan performa optimal.
 
-
-**Rubrik/Kriteria Tambahan (Opsional)**:
-
 ### Solution statements ###
 
-- Membangun model baseline menggunakan algoritma Logistic Regression karena algoritma ini sederhana, cepat, dan sering digunakan untuk klasifikasi biner seperti kasus ini.
+- Membangun model baseline menggunakan algoritma KNN karena algoritma ini relatif sederhana dibandingkan dengan algoritma lain, serta bisa digunakan untuk klasifikasi sebagaimana dalam proyek ini.
 - Membandingkan performa model baseline dengan algoritma lain seperti Random Forest dan XGBoost, yang dikenal memiliki kemampuan tinggi dalam menangani dataset tabular dan klasifikasi kompleks.
 - Melakukan tuning hyperparameter pada model terbaik untuk meningkatkan akurasi, recall, dan precision prediksi.
 - Menggunakan metrik evaluasi seperti Accuracy, Precision, Recall, dan F1-Score untuk mengukur performa setiap model secara objektif.
@@ -62,25 +57,39 @@ Dataset ini merupakan tipe multivariat (multivariate dataset), artinya terdiri d
 - Jumlah data (rows): Tergantung file final, umumnya sekitar 300+ data
 #### Fitur-fitur dalam Dataset
 Berikut ini adalah penjelasan dari fitur-fitur yang digunakan:
-- id: ID unik untuk setiap pasien
-- age: Usia pasien (dalam tahun)
-- origin: Lokasi asal data dikumpulkan
-- sex: Jenis kelamin (Male/Female)
-- cp: Jenis nyeri dada (typical angina, atypical angina, non-anginal, asymptomatic)
-- trestbps: Tekanan darah saat istirahat (mm Hg)
-- chol: Kadar kolesterol dalam darah (mg/dl)
-- fbs: Kadar gula darah puasa > 120 mg/dl (1 = ya, 0 = tidak)
-- restecg: Hasil elektrokardiografi saat istirahat (normal, stt abnormality, lv hypertrophy)
-- thalach: Detak jantung maksimum yang dicapai
-- exang: Angina akibat olahraga (1 = ya, 0 = tidak)
-- oldpeak: Depresi ST akibat latihan dibandingkan kondisi istirahat
-- slope: Kemiringan segmen ST saat puncak latihan
-- ca: Jumlah pembuluh darah besar yang terlihat dalam fluoroskopi (0–3)
-- thal: Hasil tes Thalassemia (normal, fixed defect, reversible defect)
-- num: Target (0 = tidak ada penyakit jantung, 1 = ada penyakit jantung)
+1. id: ID unik untuk setiap pasien
+2. age: Usia pasien (dalam tahun)
+3. origin: Lokasi asal data dikumpulkan
+4. sex: Jenis kelamin (Male/Female)
+5. cp: Jenis nyeri dada (typical angina, atypical angina, non-anginal, asymptomatic)
+6. trestbps: Tekanan darah saat istirahat (mm Hg)
+7. chol: Kadar kolesterol dalam darah (mg/dl)
+8. fbs: Kadar gula darah puasa > 120 mg/dl (1 = ya, 0 = tidak)
+9. restecg: Hasil elektrokardiografi saat istirahat (normal, stt abnormality, lv hypertrophy)
+10. thalach: Detak jantung maksimum yang dicapai
+11. exang: Angina akibat olahraga (1 = ya, 0 = tidak)
+12. oldpeak: Depresi ST akibat latihan dibandingkan kondisi istirahat
+13. slope: Kemiringan segmen ST saat puncak latihan
+14. ca: Jumlah pembuluh darah besar yang terlihat dalam fluoroskopi (0–3)
+15. thal: Hasil tes Thalassemia (normal, fixed defect, reversible defect)
+16. num: Target (0 = tidak ada penyakit jantung, 1 = ada penyakit jantung)
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
-- Melakukan beberapa tahapan yang diperlukan untuk memahami data, contohnya teknik visualisasi data atau exploratory data analysis.
+### Exploratory Data Analysis
+#### Informasi Dataset
+
+- Terdapat 8 kolom dengan tipe object, yaitu: sex, dataset, cp, fbs, restecg, exang, slope, dan thal. Kolom ini merupakan categorical features (fitur non-numerik).
+- Terdapat 5 kolom numerik dengan tipe data float64 yaitu: trestbps, chol, thalch, oldpeak, dan ca. Ini merupakan fitur numerik yang merupakan hasil pengukuran secara fisik.
+- Terdapat 3 kolom numerik dengan tipe data int64, yaitu: id, age, dan num. Kolom 'num' merupakan target fitur.
+
+#### Deteksi Missing Values
+
+Ada perbedaan jumlah data pada kolom *trestbps, chol, fbs, restecg, thalch, exang, oldpeak, slope, ca,* dan *thal*. Hal ini menunjukkan adanya missing values pada kolom tersebut. 
+
+#### Deteksi Data Duplikat
+
+Pada data ini tidak ditemukan data yang duplikat
+
+### Visualisasi Data
 
 ## Data Preparation
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
@@ -90,12 +99,69 @@ Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dil
 - Menjelaskan alasan mengapa diperlukan tahapan data preparation tersebut.
 
 ## Modeling
-Tahapan ini membahas mengenai model machine learning yang digunakan untuk menyelesaikan permasalahan. Anda perlu menjelaskan tahapan dan parameter yang digunakan pada proses pemodelan.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan kelebihan dan kekurangan dari setiap algoritma yang digunakan.
-- Jika menggunakan satu algoritma pada solution statement, lakukan proses improvement terhadap model dengan hyperparameter tuning. **Jelaskan proses improvement yang dilakukan**.
-- Jika menggunakan dua atau lebih algoritma pada solution statement, maka pilih model terbaik sebagai solusi. **Jelaskan mengapa memilih model tersebut sebagai model terbaik**.
+### 1. Pemilihan Algoritma 
+
+Pada proyek ini digunakan 3 algoritma klasifikasi untuk memprediksi risiko penyakit jantung, yaitu:
+
+1. K-Nearest Neighbors (KNN)
+2. Random Forest Classifier
+3. Extreme Gradient Boosting (XGBoost)
+
+Pemilihan ketiga algoritma tersebut dilakukan untuk membandingkan performa masing-masing model dan menentukan algoritma terbaik dalam menyelesaikan permasalahan klasifikasi risiko penyakit jantung.
+
+### 2. Tahapan Modeling
+
+1. **Split Data**  
+    Dataset dibagi menjadi data latih (80%) dan data uji (20%) menggunakan fungsi `train_test_split`.
+
+2. **Pemodelan**
+   - Model **KNN** dibangun dengan parameter default `n_neighbors=5`.
+   - Model **Random Forest** dibangun dengan `n_estimators=100`.
+   - Model **XGBoost** dibangun dengan parameter dasar:
+     - `eval_metric='logloss'`
+     - `use_label_encoder=False`
+
+3. **Prediksi & Evaluasi**  
+   Digunakan `classification_report` untuk menghitung metrik evaluasi: akurasi, precision, recall, dan f1-score.
+
+### 3. Kelebihan dan Kekurangan Algoritma
+
+Berikut ini adalah kelebihan dan kekurangan dari masing-masing algoritma yang digunakan dalam pemodelan:
+
+#### 1. K-Nearest Neighbor (KNN)
+- **Kelebihan:**
+  - Mudah dipahami dan diimplementasikan.
+  - Tidak membuat asumsi tentang distribusi data.
+
+- **Kekurangan:**
+  - Sangat sensitif terhadap skala fitur (dapat diatasi dengan standardisasi).
+  - Tidak optimal untuk data dengan banyak noise atau outlier.
+  - Tidak dapat menangani data kosong (*missing values*).
+
+#### 2. Random Forest
+- **Kelebihan:**
+  - Cocok untuk data tabular seperti dataset ini.
+  - Tidak memerlukan proses scaling atau normalisasi.
+  - Tahan terhadap outlier dan *missing value* (hingga batas tertentu).
+  - Memberikan insight berupa *feature importance*.
+
+- **Kekurangan:**
+  - Komputasi bisa menjadi berat jika jumlah *tree* sangat banyak.
+
+#### 3. XGBoost
+- **Kelebihan:**
+  - Performa tinggi untuk klasifikasi data tabular.
+  - Mampu menangani data imbalance, *missing value*, dan outlier dengan baik.
+  - Mendukung banyak opsi *tuning* untuk optimasi akurasi.
+
+- **Kekurangan:**
+  - Proses *tuning* lebih kompleks (learning rate, estimators, max depth, dll.).
+  - Interpretasi model lebih rumit dibandingkan Random Forest.
+
+### 4. Model Terbaik
+
+  Berdasarkan hasil evaluasi, diperoleh model terbaik adalah **Random Forest** karena memiliki akurasi tertinggi sebesar 89,1%. Selain itu, algoritma ini juga memiliki F1-score tertinggi di kedua kelas (0 dan 1), serta memiliki keseimbangan precision dan recall yang sangat baik. 
 
 ## Evaluation
 Pada bagian ini anda perlu menyebutkan metrik evaluasi yang digunakan. Lalu anda perlu menjelaskan hasil proyek berdasarkan metrik evaluasi yang digunakan.
