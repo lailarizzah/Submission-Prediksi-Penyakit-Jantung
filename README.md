@@ -91,7 +91,7 @@ Pada data ini tidak ditemukan data yang duplikat
 
 ### Visualisasi Data
 
-![Heatmap Korelasi](image/heatmap_korelasi.png)
+![Histogram](image/histogram_plot.png)
 
 
 ## Data Preparation
