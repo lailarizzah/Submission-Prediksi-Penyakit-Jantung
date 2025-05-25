@@ -91,8 +91,7 @@ Pada data ini tidak ditemukan data yang duplikat
 
 ### Visualisasi Data
 
-![Histogram](image/histogram_plot.png)
-
+![Heatmap Korelasi](images/heatmap_korelasi.png)
 
 ## Data Preparation
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
