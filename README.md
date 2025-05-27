@@ -43,8 +43,7 @@ Redwankarimsony. (2023). Heart Disease Data [Data set]. Kaggle. https://www.kagg
 
 - Membangun model baseline menggunakan algoritma KNN karena algoritma ini relatif sederhana dibandingkan dengan algoritma lain, serta bisa digunakan untuk klasifikasi sebagaimana dalam proyek ini.
 - Membandingkan performa model baseline dengan algoritma lain seperti Random Forest dan XGBoost, yang dikenal memiliki kemampuan tinggi dalam menangani dataset tabular dan klasifikasi kompleks.
-- Melakukan tuning hyperparameter pada model terbaik untuk meningkatkan akurasi, recall, dan precision prediksi.
-- Menggunakan metrik evaluasi seperti Accuracy, Precision, Recall, dan F1-Score untuk mengukur performa setiap model secara objektif.
+- Menggunakan metrik evaluasi seperti Confussion Metrix, Accuracy, Precision, Recall, dan F1-Score untuk mengukur performa setiap model secara objektif.
 
 ## Data Understanding
 Dataset yang digunakan berasal dari [Kaggle - Heart Disease Dataset](https://www.kaggle.com/datasets/redwankarimsony/heart-disease-data). Dataset ini merupakan subset dari Cleveland Heart Disease Database, yang merupakan salah satu referensi paling umum dalam penelitian machine learning untuk prediksi penyakit jantung.
@@ -54,7 +53,7 @@ Dataset ini merupakan tipe multivariat (multivariate dataset), artinya terdiri d
 ### Variabel-variabel pada Heart Disease Dataset adalah sebagai berikut:
 #### Jumlah Data
 - Jumlah fitur: 14 fitur utama + 1 target
-- Jumlah data (rows): Tergantung file final, umumnya sekitar 300+ data
+- Jumlah data (rows): 920 
 #### Fitur-fitur dalam Dataset
 Berikut ini adalah penjelasan dari fitur-fitur yang digunakan:
 1. id: ID unik untuk setiap pasien
@@ -140,11 +139,36 @@ Setelah dilakukan imputasi dan penghapusan fitur bermasalah, dilakukan pengeceka
 
 ### 2. Encoding Variabel Kategorik
 
-Proses ini dilakukan untuk mengubah kolom bertipe boolean menjadi angka (0 dan 1) agar data siap digunakan dalam analisis atau machine learning. 
+Encoding dilakukan untuk mengubah fitur kategorikal menjadi numerik, karena algoritma machine learning tidak dapat memproses data bertipe string secara langsung. Berdasarkan dataset, kolom-kolom seperti `sex`, `cp`, `fbs`, `restecg`, `exang`, `slope`, `thal`, dan `dataset` merupakan fitur kategorikal yang perlu dikodekan.
 
-### 3. Standarisasi
+**Teknik yang digunakan:**
 
-Proses ini dilakukan untuk menstandarisasi data numerik agar semua fitur (fitur numerik) memiliki skala yang sama sebelum digunakan dalam analisis atau machine learning.
+- **One-Hot Encoding**  
+  Menggunakan `pd.get_dummies()` dengan opsi `drop_first=True` untuk menghindari multikolinearitas antar fitur hasil encoding.
+
+- **Konversi Boolean ke Integer**  
+  Kolom hasil encoding bertipe boolean diubah ke tipe integer (`True/False` → `1/0`) agar lebih seragam untuk proses training model.
+
+Langkah ini sangat penting untuk memastikan semua fitur berada dalam format numerik yang sesuai dengan kebutuhan model machine learning.
+ 
+
+### 3. Standarisasi Fitur Numerik
+
+Standarisasi dilakukan untuk menyamakan skala antar fitur numerik, terutama karena beberapa algoritma seperti **K-Nearest Neighbor (KNN)** sangat sensitif terhadap perbedaan skala. 
+
+Dalam dataset ini, fitur numerik seperti `age`, `trestbps`, `chol`, `thalach`, dan `oldpeak` memiliki rentang nilai yang berbeda. Jika tidak distandarisasi, fitur dengan skala besar dapat mendominasi proses pembelajaran.
+
+**Metode yang digunakan:**
+- `StandardScaler` dari `sklearn.preprocessing`  
+  Mengubah distribusi fitur menjadi memiliki **mean = 0** dan **standard deviation = 1** (standar Z-score).
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+numerical_cols = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
+heart_encoded[numerical_cols] = scaler.fit_transform(heart_encoded[numerical_cols])
+```
 
 ## Modeling
 
@@ -212,19 +236,89 @@ Berikut ini adalah kelebihan dan kekurangan dari masing-masing algoritma yang di
   Berdasarkan hasil evaluasi, diperoleh model terbaik adalah **Random Forest** karena memiliki akurasi tertinggi sebesar 89,1%. Selain itu, algoritma ini juga memiliki F1-score tertinggi di kedua kelas (0 dan 1), serta memiliki keseimbangan precision dan recall yang sangat baik. 
 
 ## Evaluation
-Pada bagian ini anda perlu menyebutkan metrik evaluasi yang digunakan. Lalu anda perlu menjelaskan hasil proyek berdasarkan metrik evaluasi yang digunakan.
 
-Sebagai contoh, Anda memiih kasus klasifikasi dan menggunakan metrik **akurasi, precision, recall, dan F1 score**. Jelaskan mengenai beberapa hal berikut:
-- Penjelasan mengenai metrik yang digunakan
-- Menjelaskan hasil proyek berdasarkan metrik evaluasi
+Evaluasi dilakukan menggunakan **confusion matrix**, yaitu tabel klasifikasi berdasarkan 4 nilai utama:
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+- **TP (True Positive)**: Prediksi positif yang benar.
+- **TN (True Negative)**: Prediksi negatif yang benar.
+- **FP (False Positive)**: Prediksi positif yang salah.
+- **FN (False Negative)**: Prediksi negatif yang salah.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+|              | Predicted Positive | Predicted Negative |
+|--------------|--------------------|--------------------|
+| **Actual Positive** | True Positive (TP)     | False Negative (FN)    |
+| **Actual Negative** | False Positive (FP)    | True Negative (TN)     |
 
-**---Ini adalah bagian akhir laporan---**
 
-_Catatan:_
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
+### 1. Metrik Evaluasi yang Digunakan
+
+Metrik evaluasi klasifikasi digunakan untuk menilai kinerja model saat mengklasifikasikan data ke dalam kategori tertentu. Metrik evaluasi yang digunakan pada projek ini antara lain:
+
+#### 1. Accuracy
+
+Accuracy merupakan metrik paling sederhana untuk mengukur kinerja model klasifikasi. Akurasi dihitung sebagai proporsi prediksi benar (baik positif maupun negatif) terhadap seluruh prediksi yang dilakukan oleh model.
+
+$$
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+$$
+
+#### 2. Precision
+
+Precision mengukur seberapa baik model dalam menghindari positif palsu atau *false positives*.
+
+$$
+\text{Precision} = \frac{TP}{TP + FP}
+$$
+
+#### 3. Recall
+
+Recall adalah metrik yang mengukur seberapa baik model dapat menangkap semua contoh positif. Ini adalah rasio prediksi positif yang benar terhadap semua kasus positif yang sebenarnya ada dalam data.
+
+$$
+\text{Recall} = \frac{TP}{TP + FN}
+$$
+
+#### 4. F1-Score
+
+F1-Score adalah metrik yang menggabungkan presisi dan recall menjadi satu nilai tunggal yang mempertimbangkan keduanya. F1-Score adalah rata-rata harmonis dari presisi dan recall, memberikan gambaran yang lebih baik ketika ada trade-off antara keduanya.
+
+$$
+\text{F1-Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+$$
+
+### 3. Hasil Evaluasi Model
+
+| Model               | Accuracy | Precision (0) | Precision (1) | Recall (0) | Recall (1) | F1-Score (0) | F1-Score (1) |
+|---------------------|----------|---------------|---------------|------------|------------|--------------|--------------|
+| K-Nearest Neighbor  | 0.690    | 0.61          | 0.75          | 0.67       | 0.71       | 0.64         | 0.73         |
+| Random Forest       | 0.875    | 0.84          | 0.90          | 0.85       | 0.89       | 0.85         | 0.89         |
+| XGBoost             | 0.859    | 0.82          | 0.89          | 0.84       | 0.87       | 0.83         | 0.88         |
+
+### Confusion Matrix
+
+| Model               | Confusion Matrix       |
+|---------------------|------------------------|
+| K-Nearest Neighbor  | `[[50, 25], [32, 77]]` |
+| Random Forest       | `[[64, 11], [12, 97]]` |
+| XGBoost             | `[[63, 12], [14, 95]]` |
+
+> Format: `[[TN, FP], [FN, TP]]`
+
+---
+
+### 4. Analisis
+
+**K-Nearest Neighbor (KNN)**  
+Model ini memiliki akurasi sekitar 69%. Precision dan recall untuk kelas 0 dan 1 cukup rendah dibanding model lain, menandakan model kurang stabil dan kurang optimal dalam memprediksi kedua kelas. Jumlah kesalahan klasifikasi masih cukup tinggi, terutama pada kelas 0 yang sering salah diprediksi sebagai kelas 1.
+
+**Random Forest**  
+Merupakan model terbaik di antara ketiganya dengan akurasi mencapai 87,5%. Precision dan recall yang tinggi dan seimbang untuk kedua kelas menunjukkan performa yang kuat dan prediksi yang akurat. Confusion matrix juga menunjukkan jumlah kesalahan klasifikasi yang relatif kecil, baik untuk kelas 0 maupun kelas 1.
+
+**XGBoost**  
+Menunjukkan performa yang hampir sebanding dengan Random Forest dengan akurasi 85,9%. Model ini juga mampu memberikan keseimbangan baik antara precision dan recall. Kesalahan klasifikasi sedikit lebih banyak dibanding Random Forest, tapi tetap cukup akurat dan layak dipertimbangkan sebagai alternatif.
+
+---
+
+### 5. Kesimpulan
+
+Berdasarkan evaluasi, **Random Forest** adalah model terbaik untuk dataset ini dilihat dari nilai akurasi dan metrik evaluasi lainnya yang seimbang antara kelas positif dan negatif. **XGBoost** juga layak dipertimbangkan untuk optimasi lebih lanjut karena memiliki performa yang kompetitif. Sedangkan **KNN** perlu dilakukan tuning lebih lanjut atau mungkin tidak sesuai untuk masalah ini karena performanya masih jauh di bawah dua model lainnya.
