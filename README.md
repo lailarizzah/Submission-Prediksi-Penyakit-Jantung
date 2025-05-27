@@ -93,6 +93,28 @@ Pada data ini tidak ditemukan data yang duplikat
 
 ![Heatmap Korelasi](image/heatmap_korelasi.png)
 
+- age: Terdistribusi normal dengan puncak sekitar usia 55 tahun. Artinya, mayoritas pasien berusia menengah hingga tua.
+- trestbps (tekanan darah saat istirahat): Terdistribusi miring ke kanan (right-skewed), dengan banyak pasien memiliki tekanan darah sekitar 120 mmHg.
+- chol (kolesterol): Sangat miring ke kanan, dengan beberapa outlier ekstrem. Ini menunjukkan banyak pasien dengan kadar kolesterol tinggi.
+- thalach (denyut jantung maksimum): Terdistribusi agak normal, puncaknya sekitar 140 bpm.
+- oldpeak (ST depression): Banyak nilai nol, menunjukkan sebagian besar pasien tidak menunjukkan depresi ST saat uji stres. Tapi ada ekor kanan (right-skewed).
+
+![Distribusi Variabel Kategorik](image/distribusi_variabel_kategorik.png)
+
+- sex: Mayoritas pasien adalah laki-laki.
+- cp (chest pain): Jenis asymptomatic paling dominan.
+- fbs (fasting blood sugar): Sebagian besar pasien memiliki kadar gula < 120 mg/dl (False).
+- restecg: Mayoritas hasil ECG adalah normal.
+- exang (angina yang dipicu olahraga): Lebih banyak pasien tidak mengalami exercise-induced angina.
+- slope: Bentuk slope ST flat paling banyak.
+- thal: Terdistribusi hampir seimbang antara normal dan reversible defect, lebih sedikit fixed defect
+
+![Distribusi Target](image/distribusi_target.png)
+
+Terdapat sedikit ketidakseimbangan pada distribusi target, di mana kelas "Ada" penyakit jantung lebih banyak dibanding "Tidak Ada". Namun, karena perbedaan proporsinya tidak terlalu signifikan (~55% vs 45%), maka metrik evaluasi seperti akurasi, precision, recall, dan F1-score tetap relevan tanpa perlu menerapkan teknik penyeimbangan kelas.
+![Korelasi Fitur dan Target](image/korelasi_fitur_target.png)
+![Korelasi Variabel Numerik dan Target](image/korelasi_num_target.png)
+
 ## Data Preparation
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
 
