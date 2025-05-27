@@ -9,7 +9,7 @@ Proyek ini merupakan submission akhir dari kelas Machine Learning, yang berfokus
 | Nama File                               | Deskripsi                                                                 |
 |----------------------------------------|---------------------------------------------------------------------------|
 | `heart_disease_uci.csv`                | Dataset utama yang digunakan dalam proyek                                |
-| `Submission_Prediksi_Penyakit_Jantung.ipynb` | Notebook utama berisi seluruh proses mulai dari EDA hingga modelling     |
+| `Submission_Prediksi_Penyakit_Jantung.ipynb` | Notebook utama berisi seluruh alur proyek      |
 | `submission_prediksi_penyakit_jantung.py`    | File Python alternatif untuk eksekusi script                             |
 | `Laporan-Submission.md`                | Laporan akhir dalam format markdown                                      |
 | `image/`                                | Folder berisi visualisasi yang digunakan dalam laporan dan notebook      |
