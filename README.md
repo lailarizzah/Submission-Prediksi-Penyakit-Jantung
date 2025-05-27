@@ -112,15 +112,39 @@ Pada data ini tidak ditemukan data yang duplikat
 ![Distribusi Target](image/distribusi_target.png)
 
 Terdapat sedikit ketidakseimbangan pada distribusi target, di mana kelas "Ada" penyakit jantung lebih banyak dibanding "Tidak Ada". Namun, karena perbedaan proporsinya tidak terlalu signifikan (~55% vs 45%), maka metrik evaluasi seperti akurasi, precision, recall, dan F1-score tetap relevan tanpa perlu menerapkan teknik penyeimbangan kelas.
+
 ![Korelasi Fitur dan Target](image/korelasi_fitur_target.png)
-![Korelasi Variabel Numerik dan Target](image/korelasi_num_target.png)
+
+Heatmap korelasi ini menunjukkan hubungan antar fitur numerik dalam dataset. Ditemukan bahwa fitur num memiliki korelasi sangat tinggi dengan target (0.78), mengindikasikan bahwa target merupakan bentuk transformasi dari num. Fitur lain yang memiliki korelasi positif cukup kuat terhadap target adalah ca (0.46) dan oldpeak (0.39). Sebaliknya, fitur thalach memiliki korelasi negatif yang cukup kuat (-0.39), yang menunjukkan bahwa semakin tinggi detak jantung maksimal pasien, kemungkinan terkena penyakit jantung cenderung lebih rendah. Korelasi antar fitur seperti antara age dan thalach (-0.37) juga memberi informasi tambahan mengenai pola data yang dapat berguna dalam proses pemodelan selanjutnya.
 
 ## Data Preparation
-Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
+### 1. Mengatasi Missing Values
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan proses data preparation yang dilakukan
-- Menjelaskan alasan mengapa diperlukan tahapan data preparation tersebut.
+berikut beberapa tahapan yang dilakukan untuk mengatasi missing values dalam data:
+
+#### - Imputasi Nilai Hilang pada Fitur Numerik
+
+Fitur numerik seperti trestbps, chol, thalach, dan oldpeak mengandung nilai kosong. Untuk menjaga distribusi data tetap representatif dan menghindari distorsi akibat nilai ekstrem, dilakukan imputasi menggunakan nilai median. Median dipilih karena lebih robust terhadap outlier dibandingkan mean.
+
+#### - Imputasi Nilai Hilang pada Fitur Kategorikal
+
+Untuk fitur kategorikal seperti fbs, restecg, exang, slope, dan thal, nilai kosong diisi menggunakan modus (nilai yang paling sering muncul). Pemilihan modus bertujuan mempertahankan karakter dominan dari kategori tersebut agar distribusi data tidak berubah signifikan.
+
+#### - Menghapus Fitur ca
+
+Fitur ca dihapus karena memiliki terlalu banyak nilai kosong sehingga dapat mengganggu analisis dan berpotensi menurunkan kualitas model. Daripada melakukan imputasi yang bisa menghasilkan bias, penghapusan fitur ini dinilai lebih bijak.
+
+#### - Pemeriksaan Nilai Hilang
+
+Setelah dilakukan imputasi dan penghapusan fitur bermasalah, dilakukan pengecekan ulang terhadap seluruh kolom untuk memastikan bahwa tidak ada nilai yang hilang tersisa di dataset.
+
+### 2. Encoding Variabel Kategorik
+
+Proses ini dilakukan untuk mengubah kolom bertipe boolean menjadi angka (0 dan 1) agar data siap digunakan dalam analisis atau machine learning. 
+
+### 3. Standarisasi
+
+Proses ini dilakukan untuk menstandarisasi data numerik agar semua fitur (fitur numerik) memiliki skala yang sama sebelum digunakan dalam analisis atau machine learning.
 
 ## Modeling
 
