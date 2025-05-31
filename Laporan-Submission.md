@@ -52,13 +52,13 @@ Dataset ini merupakan tipe multivariat (multivariate dataset), artinya terdiri d
 
 ### Variabel-variabel pada Heart Disease Dataset adalah sebagai berikut:
 #### Jumlah Data
-- Jumlah fitur: 14 fitur utama + 1 target
+- Jumlah fitur: 16 fitur (15 fitur utama + 1 target)
 - Jumlah data (rows): 920 
 #### Fitur-fitur dalam Dataset
 Berikut ini adalah penjelasan dari fitur-fitur yang digunakan:
 1. id: ID unik untuk setiap pasien
 2. age: Usia pasien (dalam tahun)
-3. origin: Lokasi asal data dikumpulkan
+3. dataset: Lokasi asal data dikumpulkan
 4. sex: Jenis kelamin (Male/Female)
 5. cp: Jenis nyeri dada (typical angina, atypical angina, non-anginal, asymptomatic)
 6. trestbps: Tekanan darah saat istirahat (mm Hg)
@@ -72,6 +72,7 @@ Berikut ini adalah penjelasan dari fitur-fitur yang digunakan:
 14. ca: Jumlah pembuluh darah besar yang terlihat dalam fluoroskopi (0–3)
 15. thal: Hasil tes Thalassemia (normal, fixed defect, reversible defect)
 16. num: Target (0 = tidak ada penyakit jantung, 1 = ada penyakit jantung)
+
 
 ### Exploratory Data Analysis
 #### Informasi Dataset
@@ -88,9 +89,13 @@ Ada perbedaan jumlah data pada kolom *trestbps, chol, fbs, restecg, thalch, exan
 
 Pada data ini tidak ditemukan data yang duplikat
 
+### Penyesuaian Nama Kolom
+
+Dilakukan penggantian nama kolom dari `thalch` menjadi `thalach` untuk konsistensi penamaan dan kemudahan pembacaan, karena kolom ini merepresentasikan *maximum heart rate achieved*.
+
 ### Visualisasi Data
 
-![Heatmap Korelasi](image/heatmap_korelasi.png)
+![Histogram](image/histogram_plot.png)
 
 - age: Terdistribusi normal dengan puncak sekitar usia 55 tahun. Artinya, mayoritas pasien berusia menengah hingga tua.
 - trestbps (tekanan darah saat istirahat): Terdistribusi miring ke kanan (right-skewed), dengan banyak pasien memiliki tekanan darah sekitar 120 mmHg.
@@ -107,6 +112,12 @@ Pada data ini tidak ditemukan data yang duplikat
 - exang (angina yang dipicu olahraga): Lebih banyak pasien tidak mengalami exercise-induced angina.
 - slope: Bentuk slope ST flat paling banyak.
 - thal: Terdistribusi hampir seimbang antara normal dan reversible defect, lebih sedikit fixed defect
+
+### Membuat Kolom Target
+
+Dataset memiliki kolom num dengan nilai dari 0 hingga 4. Untuk keperluan klasifikasi biner, dibuat kolom target:
+- Bernilai 0 jika num == 0
+- Bernilai 1 jika num > 0
 
 ![Distribusi Target](image/distribusi_target.png)
 
@@ -170,6 +181,10 @@ numerical_cols = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
 heart_encoded[numerical_cols] = scaler.fit_transform(heart_encoded[numerical_cols])
 ```
 
+### 5. Data Spliting
+ 
+Dataset dibagi menjadi data latih (80%) dan data uji (20%) menggunakan fungsi `train_test_split`.
+
 ## Modeling
 
 ### 1. Pemilihan Algoritma 
@@ -184,18 +199,75 @@ Pemilihan ketiga algoritma tersebut dilakukan untuk membandingkan performa masin
 
 ### 2. Tahapan Modeling
 
-1. **Split Data**  
-    Dataset dibagi menjadi data latih (80%) dan data uji (20%) menggunakan fungsi `train_test_split`.
+#### 1. K-Nearest Neighbor (KNN)
 
-2. **Pemodelan**
-   - Model **KNN** dibangun dengan parameter default `n_neighbors=5`.
-   - Model **Random Forest** dibangun dengan `n_estimators=100`.
-   - Model **XGBoost** dibangun dengan parameter dasar:
-     - `eval_metric='logloss'`
-     - `use_label_encoder=False`
+KNN adalah algoritma non-parametrik yang bekerja dengan mencari `k` tetangga terdekat dari suatu data untuk menentukan kelasnya.
 
-3. **Prediksi & Evaluasi**  
-   Digunakan `classification_report` untuk menghitung metrik evaluasi: akurasi, precision, recall, dan f1-score.
+**Parameter:**
+- `n_neighbors=5`: Menggunakan 5 tetangga terdekat untuk klasifikasi.
+
+**Cara Kerja:**
+1. Model dilatih menggunakan `X_train` dan `y_train`.
+2. Prediksi dilakukan pada `X_test`.
+3. Evaluasi menggunakan:
+   - Classification Report
+   - Akurasi
+   - Confusion Matrix
+
+```python
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+y_pred_knn = knn.predict(X_test)
+
+```
+
+#### 2. Random Forest
+
+Random Forest adalah algoritma ensemble berbasis decision tree yang membangun banyak pohon keputusan dan menggabungkan hasilnya untuk meningkatkan akurasi dan mengurangi overfitting.
+
+**Parameter:**
+- `n_estimators=100`: Jumlah tree.
+- `random_state=42`: Seed untuk hasil yang konsisten.
+
+**Cara Kerja:**
+1. Model dilatih menggunakan `X_train` dan `y_train`.
+2. Prediksi dilakukan pada `X_test`.
+3. Evaluasi menggunakan:
+   - Classification Report
+   - Akurasi
+   - Confusion Matrix
+
+```python
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+y_pred_rf = rf.predict(X_test)
+```
+
+#### 3. XGBoost
+
+XGBoost adalah algoritma boosting yang efisien dan akurat, dirancang untuk performa tinggi pada dataset besar.
+
+**Parameter:**
+- `use_label_encoder=False`: Menonaktifkan label encoder bawaan.
+- `eval_metric='logloss'`: Metrik evaluasi yang digunakan selama pelatihan.
+- `random_state=42`: Seed untuk replikasi hasil.
+
+**Cara Kerja:**
+1. Model dilatih menggunakan `X_train` dan `y_train`.
+2. Prediksi dilakukan pada `X_test`.
+3. Evaluasi menggunakan:
+   - Classification Report
+   - Akurasi
+   - Confusion Matrix
+
+```python
+xgb = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+xgb.fit(X_train, y_train)
+y_pred_xgb = xgb.predict(X_test)
+```
+
+**NOTE: Prediksi & Evaluasi**  
+Digunakan `classification_report` untuk menghitung metrik evaluasi: akurasi, precision, recall, dan f1-score.
 
 ### 3. Kelebihan dan Kekurangan Algoritma
 
@@ -233,7 +305,7 @@ Berikut ini adalah kelebihan dan kekurangan dari masing-masing algoritma yang di
 
 ### 4. Model Terbaik
 
-  Berdasarkan hasil evaluasi, diperoleh model terbaik adalah **Random Forest** karena memiliki akurasi tertinggi sebesar 89,1%. Selain itu, algoritma ini juga memiliki F1-score tertinggi di kedua kelas (0 dan 1), serta memiliki keseimbangan precision dan recall yang sangat baik. 
+Berdasarkan hasil evaluasi, diperoleh model terbaik adalah **Random Forest** karena memiliki akurasi tertinggi sebesar 87%. Selain itu, algoritma ini juga memiliki F1-score tertinggi di kedua kelas (0 dan 1), serta memiliki keseimbangan precision dan recall yang sangat baik. 
 
 ## Evaluation
 
@@ -290,35 +362,33 @@ $$
 
 | Model               | Accuracy | Precision (0) | Precision (1) | Recall (0) | Recall (1) | F1-Score (0) | F1-Score (1) |
 |---------------------|----------|---------------|---------------|------------|------------|--------------|--------------|
-| K-Nearest Neighbor  | 0.690    | 0.61          | 0.75          | 0.67       | 0.71       | 0.64         | 0.73         |
-| Random Forest       | 0.875    | 0.84          | 0.90          | 0.85       | 0.89       | 0.85         | 0.89         |
-| XGBoost             | 0.859    | 0.82          | 0.89          | 0.84       | 0.87       | 0.83         | 0.88         |
+| K-Nearest Neighbor  | 0.85    | 0.83         | 0.86          | 0.79       | 0.89       | 0.81         | 0.87         |
+| Random Forest       | 0.87    | 0.83          | 0.90          | 0.85       | 0.88       | 0.84         | 0.89         |
+| XGBoost             | 0.86    | 0.82          | 0.89          | 0.84       | 0.87       | 0.83         | 0.88         |
 
 ### Confusion Matrix
 
 | Model               | Confusion Matrix       |
 |---------------------|------------------------|
-| K-Nearest Neighbor  | `[[50, 25], [32, 77]]` |
-| Random Forest       | `[[64, 11], [12, 97]]` |
+| K-Nearest Neighbor  | `[[59, 16], [12, 97]]` |
+| Random Forest       | `[[64, 11], [13, 96]]` |
 | XGBoost             | `[[63, 12], [14, 95]]` |
 
 > Format: `[[TN, FP], [FN, TP]]`
 
----
-
 ### 4. Analisis
 
-**K-Nearest Neighbor (KNN)**  
-Model ini memiliki akurasi sekitar 69%. Precision dan recall untuk kelas 0 dan 1 cukup rendah dibanding model lain, menandakan model kurang stabil dan kurang optimal dalam memprediksi kedua kelas. Jumlah kesalahan klasifikasi masih cukup tinggi, terutama pada kelas 0 yang sering salah diprediksi sebagai kelas 1.
+**K-Nearest Neighbor (KNN)**
 
-**Random Forest**  
-Merupakan model terbaik di antara ketiganya dengan akurasi mencapai 87,5%. Precision dan recall yang tinggi dan seimbang untuk kedua kelas menunjukkan performa yang kuat dan prediksi yang akurat. Confusion matrix juga menunjukkan jumlah kesalahan klasifikasi yang relatif kecil, baik untuk kelas 0 maupun kelas 1.
+Model ini memiliki akurasi sebesar 85%. Precision untuk kelas 0 sebesar 0.83 dan kelas 1 sebesar 0.86, sedangkan recall-nya masing-masing 0.79 (kelas 0) dan 0.89 (kelas 1). Meskipun performanya cukup baik untuk kelas 1, KNN masih kurang optimal dalam mengenali kelas 0, terbukti dari 16 data kelas 0 yang salah diklasifikasikan sebagai kelas 1. F1-score keseluruhan tetap stabil di angka 0.81, namun masih ada ruang untuk perbaikan terutama dalam mengurangi kesalahan klasifikasi pada kelas 0.
 
-**XGBoost**  
-Menunjukkan performa yang hampir sebanding dengan Random Forest dengan akurasi 85,9%. Model ini juga mampu memberikan keseimbangan baik antara precision dan recall. Kesalahan klasifikasi sedikit lebih banyak dibanding Random Forest, tapi tetap cukup akurat dan layak dipertimbangkan sebagai alternatif.
+**Random Forest**
 
----
+Model ini memberikan hasil terbaik secara keseluruhan dengan akurasi 87%, precision tinggi (0.83 untuk kelas 0 dan 0.90 untuk kelas 1), serta recall yang cukup seimbang (0.85 dan 0.88). Confusion matrix menunjukkan hanya 11 data kelas 0 dan 13 data kelas 1 yang salah prediksi. F1-score tinggi untuk kedua kelas (0.84 dan 0.89) menunjukkan performa yang kuat dan konsisten, baik dalam mengidentifikasi kelas negatif maupun positif.
+
+**XGBoost**
+
+Memiliki akurasi 86%, menjadikannya model kompetitif dengan Random Forest. Precision dan recall masing-masing 0.82 dan 0.84 untuk kelas 0, serta 0.89 dan 0.87 untuk kelas 1. Confusion matrix menunjukkan 12 kesalahan klasifikasi pada kelas 0 dan 14 pada kelas 1. F1-score juga tinggi (0.83 dan 0.88), sehingga model ini bisa menjadi alternatif yang baik jika dilakukan tuning lebih lanjut.
 
 ### 5. Kesimpulan
-
-Berdasarkan evaluasi, **Random Forest** adalah model terbaik untuk dataset ini dilihat dari nilai akurasi dan metrik evaluasi lainnya yang seimbang antara kelas positif dan negatif. **XGBoost** juga layak dipertimbangkan untuk optimasi lebih lanjut karena memiliki performa yang kompetitif. Sedangkan **KNN** perlu dilakukan tuning lebih lanjut atau mungkin tidak sesuai untuk masalah ini karena performanya masih jauh di bawah dua model lainnya.
+Berdasarkan hasil evaluasi, **Random Forest** adalah model dengan performa terbaik pada dataset ini, dengan akurasi tertinggi (87%), serta precision dan recall yang sangat baik dan seimbang. XGBoost juga layak dipertimbangkan karena performanya hampir sebanding, hanya sedikit di bawah Random Forest dalam hal akurasi dan ketepatan. Sementara itu, KNN menunjukkan performa cukup baik, namun masih menghasilkan lebih banyak kesalahan klasifikasi pada kelas 0, sehingga kurang ideal jika dibandingkan dengan dua model lainnya tanpa tuning tambahan.
