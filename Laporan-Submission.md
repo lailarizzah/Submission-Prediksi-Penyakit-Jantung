@@ -181,7 +181,7 @@ numerical_cols = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
 heart_encoded[numerical_cols] = scaler.fit_transform(heart_encoded[numerical_cols])
 ```
 
-### 5. Data Spliting
+### 4. Data Spliting
  
 Dataset dibagi menjadi data latih (80%) dan data uji (20%) menggunakan fungsi `train_test_split`.
 
